@@ -1,0 +1,30 @@
+{{ define "content" }}
+    <p>
+        Ciao, <b>{{ .GiverName }}</b>!<br>
+        Per questo Natale, dovrai fare un regalo a <b>{{ .ReceiverName }}</b>!<br><br>
+
+        {{ if .IdeasEnabled }}
+                Per aiutarti in questo compito, ecco qualche idea:
+            </p>
+
+            <ul id="ideas">
+                {{ range .Ideas }}
+                    {{ if .Link }}
+                        <li><a href="{{ .Link }}">{{ .Description }}</a></li>
+                    {{ else }}
+                        <li>{{ .Description }}</li>
+                    {{ end }}
+                {{ end }}
+            </ul>
+
+            <p>
+                Ti ricordo che il tuo regalo non deve essere necessariamente uno di quelli in lista,
+                ma in ogni caso
+        {{ else }}
+                Ti ricordo che
+        {{ end }}
+
+        il budget massimo deve essere intorno ai {{ .Budget }}{{ .Currency }}. <br><br>
+        Buona ricerca, e buon Natale!
+    </p>
+{{ end }}
