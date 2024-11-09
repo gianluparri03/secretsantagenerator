@@ -1,0 +1,7 @@
+*.json
+!players_sample.json
+!config_sample.json
+
+pics/*
+!pics/_arrow.png
+!pics/_missing.png

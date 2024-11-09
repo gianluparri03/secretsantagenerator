@@ -2,19 +2,25 @@ package main
 
 import (
 	"bytes"
-	"fmt"
 	"gopkg.in/gomail.v2"
 	"html/template"
 	"path/filepath"
 )
 
-// messagePool contains all the messages to be sent
-var messagePool []*gomail.Message
+// SendMails generates and sends all the mails
+func SendMails(couples []Couple) error {
+	pool := []*gomail.Message{}
+	for _, c := range couples {
+		pool = append(pool, createMail(c))
+	}
 
-// CreateMail creates the message for the giver, without sending it
-func CreateMail(c Couple) {
+	return sendAll(pool)
+}
+
+// createMail creates the message for the giver
+func createMail(c Couple) *gomail.Message {
 	m := gomail.NewMessage()
-	m.SetHeader("From", EmailAddress)
+	m.SetHeader("From", Runtime.Email.Address)
 	m.SetHeader("To", c.Giver.Email)
 	m.SetHeader("Subject", "Secret Santa Generator")
 
@@ -25,24 +31,24 @@ func CreateMail(c Couple) {
 		"GiverPicPath":    filepath.Base(c.Giver.PicPath),
 		"ReceiverName":    c.Receiver.Name,
 		"ReceiverPicPath": filepath.Base(c.Receiver.PicPath),
-		"IdeasEnabled":    IdeasEnabled,
+		"IdeasEnabled":    Runtime.IdeasEnabled,
 		"Ideas":           c.Receiver.Ideas,
-		"Budget":          Budget,
-		"Currency":        Currency,
+		"Budget":          Runtime.Budget,
+		"Currency":        Runtime.Currency,
 	})
 
 	m.SetBody("text/html", buffer.String())
 	m.Embed(c.Giver.PicPath)
 	m.Embed("pics/_arrow.png")
-	m.Embed(c.Receiver.PicPath)
+	if c.Receiver.PicPath != c.Giver.PicPath {
+		m.Embed(c.Receiver.PicPath)
+	}
 
-	messagePool = append(messagePool, m)
+	return m
 }
 
-// SendAll sends all the messages in the pool
-func SendAll() {
-	d := gomail.NewDialer(EmailHost, EmailPort, EmailLogin, EmailPassword)
-	if err := d.DialAndSend(messagePool...); err != nil {
-		fmt.Printf("Error: %s\n", err.Error())
-	}
+// sendAll sends all the messages in the pool
+func sendAll(messages []*gomail.Message) error {
+	d := gomail.NewDialer(Runtime.Email.Host, Runtime.Email.Port, Runtime.Email.Login, Runtime.Email.Password)
+	return d.DialAndSend(messages...)
 }

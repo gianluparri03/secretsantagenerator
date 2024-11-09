@@ -1,0 +1,13 @@
+{
+    "ideas_enabled": true,
+    "budget": 10, 
+    "currency": "€",
+
+    "email": {
+        "address": "<..>",
+        "host": "<..>",
+        "port": 0,
+        "login": "<..>",
+        "password": "<..>"
+    }
+}
