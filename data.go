@@ -15,14 +15,13 @@ type Idea struct {
 }
 
 // Player is both a gift-giver and a gift-receiver.
-// It has a name, an email, a language, a list of ideas
+// It has a name, an email, a list of ideas
 // and an optional pic path
 type Player struct {
-	Name     string
-	Email    string
-	PicPath  string `json:"pic_path"`
-	Language string
-	Ideas    []Idea
+	Name    string
+	Email   string
+	PicPath string `json:"pic_path"`
+	Ideas   []Idea
 }
 
 // Players contains all the players
@@ -41,10 +40,8 @@ func (p *Player) Save() error {
 		return errors.New("Name must be set")
 	} else if _, err := mail.ParseAddress(p.Email); err != nil {
 		return errors.New("Invalid email")
-	} else if _, err := os.Stat(p.PicPath); err != nil {
+	} else if _, err = os.Stat(p.PicPath); err != nil {
 		return errors.New("Invalid picture")
-	} else if p.Language != "en" && p.Language != "it" {
-		return errors.New("Unknown language")
 	}
 
 	// Checks if data is duplicated

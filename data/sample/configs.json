@@ -1,4 +1,7 @@
 {
+    "subject": "SSG | Group name",
+
+    "template": "en",
     "ideas_enabled": true,
     "budget": 10, 
     "currency": "€",

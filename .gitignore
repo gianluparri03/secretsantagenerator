@@ -1,6 +1,5 @@
-*.json
-!players_sample.json
-!config_sample.json
+data/*
+!data/sample/*
 
 pics/*
 !pics/_arrow.png

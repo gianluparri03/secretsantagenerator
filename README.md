@@ -6,7 +6,7 @@ send and email to each one of them, with the extracted gift-receiver.
 
 <img src="example.jpg">
 
-To run it, simply create a copy of (or edit) `config_sample.json` and `players_sample.json`, then use
+To run it, simply create a copy of (or edit) `data/sample/configs.json` and `data/sample/players.json`, then use
 `go run . <config_file> <players_file>`. 
 
 The code is released with the [Unlicense](LICENSE). Feel free to contribute.

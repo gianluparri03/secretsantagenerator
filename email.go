@@ -22,10 +22,10 @@ func createMail(c Couple) *gomail.Message {
 	m := gomail.NewMessage()
 	m.SetHeader("From", Runtime.Email.Address)
 	m.SetHeader("To", c.Giver.Email)
-	m.SetHeader("Subject", "Secret Santa Generator")
+	m.SetHeader("Subject", Runtime.Subject)
 
 	var buffer bytes.Buffer
-	tmpl, _ := template.ParseFiles("templates/base.html", "templates/"+c.Giver.Language+".html")
+	tmpl, _ := template.ParseFiles("templates/base.html", "templates/"+Runtime.Template+".html")
 	tmpl.Execute(&buffer, map[string]any{
 		"GiverName":       c.Giver.Name,
 		"GiverPicPath":    filepath.Base(c.Giver.PicPath),

@@ -3,17 +3,16 @@
         "name": "Emily",
         "email": "emilycarbini@gmail.com",
         "pic_path": "pics/zebra.jpg",
-        "language": "it",
         "ideas": [
             {"description": "E1"},
             {"description": "E2"},
             {"description": "E3", "link": "https://google.com"}
         ]
     },
+
     {
         "name": "Luca",
         "email": "gianlucaparri03@gmail.com",
-        "language": "en",
         "ideas": [
             {"description": "L1"},
             {"description": "L2", "link": "https://google.com"}
