@@ -43,6 +43,9 @@ func main() {
 	couples := GenerateCouples()
 
 	log.Println("Sending emails...")
-	SendMails(couples)
-	log.Println("All done! Enjoy!")
+	if err := SendMails(couples); err != nil {
+		log.Fatalf("Error: %s", err.Error())
+	} else {
+		log.Println("All done! Enjoy!")
+	}
 }
