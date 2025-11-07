@@ -53,6 +53,10 @@ func LoadConfigs(filename string) (Configs, error) {
 			c.Players[j].PicPath = DEFAULT_PICPATH
 		}
 
+		if _, err := os.Stat(p.PicPath); err != nil {
+			return c, errors.New("pic not found")
+		}
+
 		for _, i := range p.Ideas {
 			if i.Description == "" {
 				return c, errors.New("found an idea without a description")

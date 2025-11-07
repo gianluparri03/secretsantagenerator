@@ -4,7 +4,7 @@ Secret Santa Generator is a simple CLI script that generates the Secret Santa's 
 Once you've added all the participants, their email, and optionally a propic and some ideas, it will
 send and email to each one of them, with the extracted gift-receiver.
 
-<img src="example.jpg">
+<img src="example.png">
 
 You can run it with `go run . <email_file> <config_file>`.
 
