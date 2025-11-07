@@ -2,29 +2,23 @@
     <p>
         Hi, <b>{{ .GiverName }}</b>!<br>
         This Christmas you'll need to find a gift for <b>{{ .ReceiverName }}</b>!<br><br>
-
-        {{ if .IdeasEnabled }}
-                To help you, here are some ideas:
-            </p>
-
-            <ul id="ideas">
-                {{ range .Ideas }}
-                    {{ if .Link }}
-                        <li><a href="{{ .Link }}">{{ .Description }}</a></li>
-                    {{ else }}
-                        <li>{{ .Description }}</li>
-                    {{ end }}
-                {{ end }}
-            </ul>
-
-            <p>
-                I remember you that the gift doesn't have to be picked necessarily from the list,
-                but either way 
-        {{ else }}
-                I remember you that 
-        {{ end }}
-
-        the cost must be around {{ .Budget }}{{ .Currency }}. <br><br>
-        I wish you a pleasant search, and a merry Christmas!
     </p>
+
+    {{ if .Ideas }}
+        <span>To help you, here are some ideas:</span>
+
+        <ul>
+            {{ range .Ideas }}
+                {{ if .Link }}
+                    <li><a href="{{ .Link }}">{{ .Description }}</a></li>
+                {{ else }}
+                    <li>{{ .Description }}</li>
+                {{ end }}
+            {{ end }}
+        </ul>
+    {{ end }}
+
+    <br><br>
+
+    <p>I wish you a pleasant search, and a merry Christmas!</p>
 {{ end }}

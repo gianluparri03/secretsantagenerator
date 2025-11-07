@@ -1,5 +1,4 @@
 data/*
-!data/sample/*
 
 pics/*
 !pics/_arrow.png
