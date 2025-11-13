@@ -14,9 +14,10 @@ const (
 
 // Configs contains the informations read from the config file
 type Configs struct {
-	Subject string
 	Lang    string
 	Players []Player
+	Subject string
+	Notes   string
 }
 
 // LoadConfigs returns an EmailConfigs instance loaded from the given file
@@ -29,14 +30,16 @@ func LoadConfigs(filename string) (Configs, error) {
 		return c, errors.New("could not load file")
 	}
 
-	if c.Subject == "" {
-		c.Subject = DEFAULT_SUBJECT
-	}
 	if c.Lang == "" {
 		c.Lang = DEFAULT_LANG
 	}
+	if c.Subject == "" {
+		c.Subject = DEFAULT_SUBJECT
+	}
 
-	if _, err := os.Stat("templates/" + c.Lang + ".html"); err != nil {
+	if f, err := templates.Open("templates/" + c.Lang + ".html"); err == nil {
+		f.Close()
+	} else if err != nil {
 		return c, errors.New("unknown lang")
 	} else if len(c.Players) < 2 {
 		return c, errors.New("too few players")
@@ -58,8 +61,8 @@ func LoadConfigs(filename string) (Configs, error) {
 		}
 
 		for _, i := range c.Players[p].Ideas {
-			if i.Description == "" {
-				return c, errors.New("found an idea without a description")
+			if i.Name == "" {
+				return c, errors.New("found an idea without a name")
 			}
 		}
 

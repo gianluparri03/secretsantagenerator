@@ -42,7 +42,7 @@ func main() {
 	fmt.Print("\nPlayers found:\n")
 	for _, p := range configs.Players {
 		time.Sleep(flags.Sleep)
-		fmt.Print("|  " + p.Name + "\n")
+		fmt.Printf("|  %s <%s> [%dI]\n", p.Name, p.Email, len(p.Ideas))
 	}
 	fmt.Print("\n")
 
@@ -60,7 +60,7 @@ func main() {
 		fmt.Print("ok.\n\n")
 
 		fmt.Print("Sending emails... ")
-		if err := emailconfigs.SendMails(couples, configs.Subject, configs.Lang); err != nil {
+		if err := emailconfigs.SendMails(configs, couples); err != nil {
 			fmt.Printf("%s.\nExiting.\n", err.Error())
 			os.Exit(1)
 		} else {

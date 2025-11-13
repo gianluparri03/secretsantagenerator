@@ -1,7 +1,7 @@
 <html>
     <head>
         <style>
-            p, span, li { font-size: 1.3em; }
+            p, span, dt, dd { font-size: 1.3em; }
 
             #logo {
                 font-size: 2.3em;
@@ -45,15 +45,20 @@
                 margin: 0 20px 0 20px;
             }
 
-            ul {
+            dl {
                 margin: 20px;
+                padding: 30px;
                 border: 1px solid;
-                padding-top: 10px;
-                padding-bottom: 10px;
                 background-color: #ebeb60;
             }
 
-            ul a {
+            dt {
+                display: list-item;
+                list-style: disc;
+                list-style-postition: inside;
+            }
+
+            dl a {
                 color: #996633;
                 text-decoration: none;
             }

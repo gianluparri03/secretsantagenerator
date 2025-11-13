@@ -6,14 +6,15 @@ import "math/rand"
 type Player struct {
 	Name    string
 	Email   string
-	PicPath string `json:"pic_path"` // optional
-	Ideas   []Idea // optional
+	PicPath string `json:"pic_path"`
+	Ideas   []Idea
 }
 
 // Idea is an idea proposed by the receiver to the giver
 type Idea struct {
+	Name        string
 	Description string
-	Link        string // optional
+	Links       map[string]string
 }
 
 // Couple stores the relation giver-receiver

@@ -7,18 +7,27 @@
     {{ if .Ideas }}
         <span>Per aiutarti in questo compito, ecco qualche idea:</span>
 
-        <ul>
+        <dl>
             {{ range .Ideas }}
-                {{ if .Link }}
-                    <li><a href="{{ .Link }}">{{ .Description }}</a></li>
-                {{ else }}
-                    <li>{{ .Description }}</li>
-                {{ end }}
+                <dt>{{ .Name }}</dt>
+
+                <dd>
+                    {{ if .Description }}{{ .Description }}.&nbsp;{{ end }}
+
+                    {{ range $k, $v := .Links }}
+                        <a href="{{ $v }}">{{ $k }}</a>.&nbsp;
+                    {{ end }}
+                </dd>
             {{ end }}
-        </ul>
+        </dl>
     {{ end }}
-            
+
     <br><br>
+
+    {{ if .Notes }}
+        <span>{{ .Notes }}</span>
+        <br><br>
+    {{ end }}
 
     <p>Buona ricerca, e buon Natale!</p>
 {{ end }}

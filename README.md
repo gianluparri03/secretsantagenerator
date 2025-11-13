@@ -38,6 +38,8 @@ A `config_file` has the following structure:
 {
     "subject": "", // the emails subject; default "SecretSantaGenerator"
 
+    "notes": "", // added on the bottom on the email; default: none
+
     "lang": "", // one of the ones available; default: en
 
     "players": [ // the list of players; required
@@ -47,8 +49,12 @@ A `config_file` has the following structure:
             "pic_path": "", // the path of the player's picture; default: pics/_missing.png
             "ideas": [      // the list of options; default: none
                 {
-                    "description": "", // required
-                    "link": "",        // default: none
+                    "name": "", // required
+                    "description": "", // default: none
+                    "links": { // default: none
+                        "link_name": "link_url" // sample link
+                        // ...
+                    },
                 }
                 // ...
             ]

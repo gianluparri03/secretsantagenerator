@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"embed"
 	"encoding/json"
 	"errors"
 	"gopkg.in/gomail.v2"
@@ -9,6 +10,9 @@ import (
 	"os"
 	"path/filepath"
 )
+
+//go:embed templates
+var templates embed.FS
 
 // EmailConfigs contains the informations needed to send the emails
 type EmailConfigs struct {
@@ -45,23 +49,24 @@ func LoadEmailConfigs(filename string) (EmailConfigs, error) {
 }
 
 // SendMails generates and sends all the mails
-func (ec EmailConfigs) SendMails(couples []Couple, subject string, lang string) error {
+func (ec EmailConfigs) SendMails(configs Configs, couples []Couple) error {
 	pool := []*gomail.Message{}
-	tmpl, _ := template.ParseFiles("templates/base.html", "templates/"+lang+".html")
+	tmpl, _ := template.ParseFS(templates, "templates/base.html", "templates/"+configs.Lang+".html")
 
 	for _, c := range couples {
 		m := gomail.NewMessage()
 		m.SetHeader("From", ec.Address)
 		m.SetHeader("To", c.Giver.Email)
-		m.SetHeader("Subject", subject)
+		m.SetHeader("Subject", configs.Subject)
 
 		var buffer bytes.Buffer
 		tmpl.Execute(&buffer, map[string]any{
 			"GiverName":       c.Giver.Name,
 			"GiverPicPath":    filepath.Base(c.Giver.PicPath),
+			"Ideas":           c.Receiver.Ideas,
+			"Notes":           configs.Notes,
 			"ReceiverName":    c.Receiver.Name,
 			"ReceiverPicPath": filepath.Base(c.Receiver.PicPath),
-			"Ideas":           c.Receiver.Ideas,
 		})
 
 		m.SetBody("text/html", buffer.String())

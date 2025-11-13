@@ -7,18 +7,27 @@
     {{ if .Ideas }}
         <span>To help you, here are some ideas:</span>
 
-        <ul>
+        <dl>
             {{ range .Ideas }}
-                {{ if .Link }}
-                    <li><a href="{{ .Link }}">{{ .Description }}</a></li>
-                {{ else }}
-                    <li>{{ .Description }}</li>
-                {{ end }}
+                <dt>{{ .Name }}</dt>
+
+                <dd>
+                    {{ if .Description }}{{ .Description }}.&nbsp;{{ end }}
+
+                    {{ range $k, $v := .Links }}
+                        <a href="{{ $v }}">{{ $k }}</a>.&nbsp;
+                    {{ end }}
+                </dd>
             {{ end }}
-        </ul>
+        </dl>
     {{ end }}
 
     <br><br>
+
+    {{ if .Notes }}
+        <span>{{ .Notes }}</span>
+        <br><br>
+    {{ end }}
 
     <p>I wish you a pleasant search, and a merry Christmas!</p>
 {{ end }}
