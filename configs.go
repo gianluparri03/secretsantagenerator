@@ -14,8 +14,8 @@ const (
 
 // Configs contains the informations read from the config file
 type Configs struct {
-	Subject string // optional
-	Lang    string // optional
+	Subject string
+	Lang    string
 	Players []Player
 }
 
@@ -42,31 +42,31 @@ func LoadConfigs(filename string) (Configs, error) {
 		return c, errors.New("too few players")
 	}
 
-	for j, p := range c.Players {
-		if p.Name == "" {
+	for p, _ := range c.Players {
+		if c.Players[p].Name == "" {
 			return c, errors.New("found a player without a name")
-		} else if p.Email == "" {
+		} else if c.Players[p].Email == "" {
 			return c, errors.New("found a player without an email")
 		}
 
-		if p.PicPath == "" {
-			c.Players[j].PicPath = DEFAULT_PICPATH
+		if c.Players[p].PicPath == "" {
+			c.Players[p].PicPath = DEFAULT_PICPATH
 		}
 
-		if _, err := os.Stat(p.PicPath); err != nil {
+		if _, err := os.Stat(c.Players[p].PicPath); err != nil {
 			return c, errors.New("pic not found")
 		}
 
-		for _, i := range p.Ideas {
+		for _, i := range c.Players[p].Ideas {
 			if i.Description == "" {
 				return c, errors.New("found an idea without a description")
 			}
 		}
 
-		for jj := j + 1; jj < len(c.Players); jj++ {
-			if c.Players[jj].Name == p.Name {
+		for p2 := p + 1; p2 < len(c.Players); p2++ {
+			if c.Players[p2].Name == c.Players[p].Name {
 				return c, errors.New("found a duplicated name")
-			} else if c.Players[jj].Email == p.Email {
+			} else if c.Players[p2].Email == c.Players[p].Email {
 				return c, errors.New("found a duplicated email")
 			}
 		}

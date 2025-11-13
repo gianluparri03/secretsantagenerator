@@ -22,7 +22,7 @@ type Couple struct {
 	Receiver Player
 }
 
-// GenerateCouples creates all the couples
+// GenerateCouples creates the couples
 func (c Configs) GenerateCouples() []Couple {
 	var derangement []int
 	for valid := false; !valid; {
@@ -39,6 +39,16 @@ func (c Configs) GenerateCouples() []Couple {
 	var couples []Couple
 	for g, r := range derangement {
 		couples = append(couples, Couple{Giver: c.Players[g], Receiver: c.Players[r]})
+	}
+
+	return couples
+}
+
+// GenerateTestCouples creates the couples for the test mode
+func (c Configs) GenerateTestCouples() []Couple {
+	var couples []Couple
+	for _, p := range c.Players {
+		couples = append(couples, Couple{Giver: p, Receiver: p})
 	}
 
 	return couples

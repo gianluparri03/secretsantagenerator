@@ -6,7 +6,20 @@ send and email to each one of them, with the extracted gift-receiver.
 
 <img src="example.png">
 
-You can run it with `go run . <email_file> <config_file>`.
+You can run it with:
+
+```
+go build -o ssg .
+./ssg --config <config_file> --email <email_file> [--parse] [--sleep <duration>] [--test]
+```
+
+where
+
+- `config_file` is the path to your config file
+- `email_file` is the path to your email file
+- `--parse`, if set, will skip the email sending stage, so it will only check if the configs are correct
+- `--sleep` can set a custom sleep time; `--sleep 0` will be blazingly-fast!
+- `--test`, if set, will pair everyone with themself.
 
 An `email_file` has the following structure:
 

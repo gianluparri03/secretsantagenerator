@@ -7,57 +7,66 @@ import (
 )
 
 func main() {
-	print("Secret Santa Generator\n======================\n")
+	fmt.Print("Secret Santa Generator\n======================\n")
 
-	if len(os.Args) < 3 {
-		fatal("Please provide an email_file and a config_file")
-	}
-
-	print("Reading email_file... ")
-	emailconfigs, err := LoadEmailConfigs(os.Args[1])
+	flags, err := ParseFlags()
 	if err != nil {
-		fatal(err.Error())
+		fmt.Printf("%s.\nExiting.\n", err.Error())
+		os.Exit(1)
 	} else {
-		print("ok.\n")
+		time.Sleep(flags.Sleep)
 	}
 
-	print("Reading configs_file... ")
-	configs, err := LoadConfigs(os.Args[2])
+	fmt.Print("Reading email_file... ")
+	emailconfigs, err := LoadEmailConfigs(flags.Email)
 	if err != nil {
-		fatal(err.Error())
+		fmt.Printf("%s.\nExiting.\n", err.Error())
+		os.Exit(1)
 	} else {
-		print("ok.\n")
+		time.Sleep(flags.Sleep)
+		fmt.Print("ok.\n")
 	}
 
-	print("\nPlayers found:\n")
+	fmt.Print("Reading configs_file... ")
+	configs, err := LoadConfigs(flags.Config)
+	if err != nil {
+		fmt.Printf("%s.\nExiting.\n", err.Error())
+		os.Exit(1)
+	} else {
+		time.Sleep(flags.Sleep)
+		fmt.Print("ok.\n")
+	}
+
+	time.Sleep(2 * flags.Sleep)
+
+	fmt.Print("\nPlayers found:\n")
 	for _, p := range configs.Players {
-		print("|  " + p.Name + "\n")
+		time.Sleep(flags.Sleep)
+		fmt.Print("|  " + p.Name + "\n")
 	}
-	print("\n")
+	fmt.Print("\n")
 
-	print("Generating couples... ")
-	couples := configs.GenerateCouples()
-	print("ok.\n")
-	print("\n")
+	time.Sleep(2 * flags.Sleep)
 
-	print("Sending emails... ")
-	if err := emailconfigs.SendMails(couples, configs.Subject, configs.Lang); err != nil {
-		fatal(err.Error())
-	} else {
-		print("ok.\n")
+	if !flags.Parse {
+		fmt.Print("Generating couples... ")
+		var couples []Couple
+		if !flags.Test {
+			couples = configs.GenerateCouples()
+		} else {
+			couples = configs.GenerateTestCouples()
+		}
+		time.Sleep(5 * flags.Sleep)
+		fmt.Print("ok.\n\n")
+
+		fmt.Print("Sending emails... ")
+		if err := emailconfigs.SendMails(couples, configs.Subject, configs.Lang); err != nil {
+			fmt.Printf("%s.\nExiting.\n", err.Error())
+			os.Exit(1)
+		} else {
+			fmt.Print("ok.\n")
+		}
 	}
 
-	print("\nDone! Bye bye!\n")
-}
-
-// fatal prints an error then exits
-func fatal(msg string) {
-	fmt.Printf("%s.\nExiting.\n", msg)
-	os.Exit(1)
-}
-
-// print prints a message
-func print(msg string) {
-	fmt.Print(msg)
-	time.Sleep(400 * time.Millisecond) // just for fun
+	fmt.Print("\nDone! Merry Christmas everybody!\n")
 }
