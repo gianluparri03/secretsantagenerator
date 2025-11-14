@@ -37,7 +37,7 @@ func LoadConfigs(filename string) (Configs, error) {
 		c.Subject = DEFAULT_SUBJECT
 	}
 
-	if f, err := templates.Open("templates/" + c.Lang + ".html"); err == nil {
+	if f, err := assets.Open("templates/" + c.Lang + ".html"); err == nil {
 		f.Close()
 	} else if err != nil {
 		return c, errors.New("unknown lang")
@@ -54,9 +54,7 @@ func LoadConfigs(filename string) (Configs, error) {
 
 		if c.Players[p].PicPath == "" {
 			c.Players[p].PicPath = DEFAULT_PICPATH
-		}
-
-		if _, err := os.Stat(c.Players[p].PicPath); err != nil {
+		} else if _, err := os.Stat(c.Players[p].PicPath); err != nil {
 			return c, errors.New("pic not found")
 		}
 

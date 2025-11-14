@@ -2,17 +2,14 @@ package main
 
 import (
 	"bytes"
-	"embed"
 	"encoding/json"
 	"errors"
 	"gopkg.in/gomail.v2"
 	"html/template"
+	"io"
 	"os"
 	"path/filepath"
 )
-
-//go:embed templates
-var templates embed.FS
 
 // EmailConfigs contains the informations needed to send the emails
 type EmailConfigs struct {
@@ -48,10 +45,9 @@ func LoadEmailConfigs(filename string) (EmailConfigs, error) {
 	return ec, nil
 }
 
-// SendMails generates and sends all the mails
-func (ec EmailConfigs) SendMails(configs Configs, couples []Couple) error {
-	pool := []*gomail.Message{}
-	tmpl, _ := template.ParseFS(templates, "templates/base.html", "templates/"+configs.Lang+".html")
+// BuildMails builds and returns all the mails
+func (ec EmailConfigs) BuildMails(configs Configs, couples []Couple) (pool []*gomail.Message) {
+	tmpl, _ := template.ParseFS(assets, "templates/base.html", "templates/"+configs.Lang+".html")
 
 	for _, c := range couples {
 		m := gomail.NewMessage()
@@ -70,15 +66,49 @@ func (ec EmailConfigs) SendMails(configs Configs, couples []Couple) error {
 		})
 
 		m.SetBody("text/html", buffer.String())
-		m.Embed(c.Giver.PicPath)
-		m.Embed("pics/_arrow.png")
+		embedFile(m, c.Giver.PicPath)
+		embedFile(m, "pics/_arrow.png")
 		if c.Receiver.PicPath != c.Giver.PicPath {
-			m.Embed(c.Receiver.PicPath)
+			embedFile(m, c.Receiver.PicPath)
 		}
 
 		pool = append(pool, m)
 	}
 
-	d := gomail.NewDialer(ec.Host, ec.Port, ec.Login, ec.Password)
-	return d.DialAndSend(pool...)
+	return pool
+}
+
+// SendMails sends the mails
+func (ec EmailConfigs) SendMails(pool []*gomail.Message) error {
+	dialer := gomail.NewDialer(ec.Host, ec.Port, ec.Login, ec.Password)
+	err := dialer.DialAndSend(pool...)
+	return err
+}
+
+// TryConnect tries to connect to the mail server
+func (ec EmailConfigs) TryConnect() error {
+	dialer := gomail.NewDialer(ec.Host, ec.Port, ec.Login, ec.Password)
+	sender, err := dialer.Dial()
+	if err == nil {
+		sender.Close()
+	}
+	return err
+}
+
+// embedFile embeds a file into a message; it firstly tries to get the file
+// from the embedded assets, and if does not find it it fetches it from the
+// file system.
+func embedFile(msg *gomail.Message, path string) {
+	msg.Embed(path, gomail.SetCopyFunc(func(w io.Writer) error {
+		bytes, err := assets.ReadFile(path)
+		if err != nil {
+			bytes, err = os.ReadFile(path)
+			if err != nil {
+				return err
+			}
+		}
+
+		_, err = w.Write(bytes)
+		return err
+	}))
 }

@@ -10,49 +10,49 @@ You can run it with:
 
 ```
 go build -o ssg .
-./ssg --config <config_file> --email <email_file> [--parse] [--sleep <duration>] [--test]
+./ssg --config <config_file> --email <email_file> [--dont-send] [--sleep <duration>] [--test]
 ```
 
 where
 
 - `config_file` is the path to your config file
 - `email_file` is the path to your email file
-- `--parse`, if set, will skip the email sending stage, so it will only check if the configs are correct
+- `--dont-send`, if set, will skip the email sending stage
 - `--sleep` can set a custom sleep time; `--sleep 0` will be blazingly-fast!
 - `--test`, if set, will pair everyone with themself.
 
-An `email_file` has the following structure:
+An `email_file` has the following structure (all the fields are required):
 
 ```jsonc
 {
-    "address": "", // the sender's email; required
-    "host": "",    // the mail server's host; required
-    "port": 0,     // the mail server's port; required
-    "login": "",   // used when logging into the mail server; required
-    "password": "" // used when logging into the mail server; required
+    "address": "", // the sender's email
+    "host": "",    // the mail server's host
+    "port": 0,     // the mail server's port
+    "login": "",   // used when logging into the mail server
+    "password": "" // used when logging into the mail server
 }
 ```
 
 A `config_file` has the following structure:
 ```jsonc
 {
-    "subject": "", // the emails subject; default "SecretSantaGenerator"
+    "subject": "", // the emails subject; optional
 
-    "notes": "", // added on the bottom on the email; default: none
+    "notes": "", // added on the bottom on the email; optional
 
-    "lang": "", // one of the ones available; default: en
+    "lang": "", // one of the ones available; optional
 
     "players": [ // the list of players; required
         {
             "name": "",     // the player's name; required
             "email": "",    // the player's email; required
-            "pic_path": "", // the path of the player's picture; default: pics/_missing.png
-            "ideas": [      // the list of options; default: none
+            "pic_path": "", // the path of the player's picture; optional
+            "ideas": [      // the list of options; optional
                 {
                     "name": "", // required
-                    "description": "", // default: none
-                    "links": { // default: none
-                        "link_name": "link_url" // sample link
+                    "description": "", // optional
+                    "links": { // optional
+                        "link_name": "link_url"
                         // ...
                     },
                 }
@@ -63,5 +63,8 @@ A `config_file` has the following structure:
     ]
 }
 ```
+
+Note that `templates/*`, `pics/_missing.png` and `pics/_arrow.png` are embedded
+into the executable, so you'll have to rebuild it in order to use the new files.
 
 The code is released with the [Unlicense](LICENSE). Feel free to contribute.

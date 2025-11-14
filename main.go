@@ -1,72 +1,88 @@
 package main
 
 import (
+	"embed"
 	"fmt"
 	"os"
-	"time"
 )
 
-func main() {
-	fmt.Print("Secret Santa Generator\n======================\n")
+//go:embed templates pics/_missing.png pics/_arrow.png
+var assets embed.FS
 
+func main() {
 	flags, err := ParseFlags()
-	if err != nil {
-		fmt.Printf("%s.\nExiting.\n", err.Error())
-		os.Exit(1)
-	} else {
-		time.Sleep(flags.Sleep)
+	checkErr(err, false)
+
+	fmt.Println("Secret Santa Generator")
+	fmt.Println("======================")
+	if flags.DontSend && flags.Test {
+		fmt.Println("Running in dont-send + test mode\n")
+	} else if flags.DontSend {
+		fmt.Println("Running in dont-send mode\n")
+	} else if flags.Test {
+		fmt.Println("Running in test mode\n")
 	}
+	flags.Sleep(2)
 
 	fmt.Print("Reading email_file... ")
 	emailconfigs, err := LoadEmailConfigs(flags.Email)
-	if err != nil {
-		fmt.Printf("%s.\nExiting.\n", err.Error())
-		os.Exit(1)
-	} else {
-		time.Sleep(flags.Sleep)
-		fmt.Print("ok.\n")
-	}
+	flags.Sleep(1)
+	checkErr(err, true)
 
 	fmt.Print("Reading configs_file... ")
 	configs, err := LoadConfigs(flags.Config)
-	if err != nil {
-		fmt.Printf("%s.\nExiting.\n", err.Error())
-		os.Exit(1)
-	} else {
-		time.Sleep(flags.Sleep)
-		fmt.Print("ok.\n")
-	}
+	flags.Sleep(1)
+	checkErr(err, true)
 
-	time.Sleep(2 * flags.Sleep)
+	flags.Sleep(2)
 
 	fmt.Print("\nPlayers found:\n")
 	for _, p := range configs.Players {
-		time.Sleep(flags.Sleep)
-		fmt.Printf("|  %s <%s> [%dI]\n", p.Name, p.Email, len(p.Ideas))
+		flags.Sleep(1)
+		fmt.Printf("|  %s <%s>\n", p.Name, p.Email)
 	}
+
 	fmt.Print("\n")
+	flags.Sleep(2)
 
-	time.Sleep(2 * flags.Sleep)
+	fmt.Print("Generating couples... ")
+	var couples []Couple
+	if !flags.Test {
+		couples = configs.GenerateCouples()
+	} else {
+		couples = configs.GenerateTestCouples()
+	}
+	flags.Sleep(4)
+	checkErr(nil, true)
 
-	if !flags.Parse {
-		fmt.Print("Generating couples... ")
-		var couples []Couple
-		if !flags.Test {
-			couples = configs.GenerateCouples()
-		} else {
-			couples = configs.GenerateTestCouples()
-		}
-		time.Sleep(5 * flags.Sleep)
-		fmt.Print("ok.\n\n")
+	fmt.Print("Building emails... ")
+	mails := emailconfigs.BuildMails(configs, couples)
+	flags.Sleep(3)
+	checkErr(nil, true)
 
+	fmt.Print("Connecting to the mail server... ")
+	err = emailconfigs.TryConnect()
+	flags.Sleep(1)
+	checkErr(err, true)
+
+	if !flags.DontSend {
 		fmt.Print("Sending emails... ")
-		if err := emailconfigs.SendMails(configs, couples); err != nil {
-			fmt.Printf("%s.\nExiting.\n", err.Error())
-			os.Exit(1)
-		} else {
-			fmt.Print("ok.\n")
-		}
+		err = emailconfigs.SendMails(mails)
+		flags.Sleep(1)
+		checkErr(err, true)
 	}
 
+	flags.Sleep(1)
 	fmt.Print("\nDone! Merry Christmas everybody!\n")
+}
+
+// checkErr prints the error and exits if there's an error,
+// otherwise if printOk is set it will print "ok.\n"
+func checkErr(err error, printOk bool) {
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
+	} else if printOk {
+		fmt.Println("ok.")
+	}
 }
