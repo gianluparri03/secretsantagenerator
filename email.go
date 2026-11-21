@@ -31,15 +31,15 @@ func LoadEmailConfigs(filename string) (EmailConfigs, error) {
 	}
 
 	if ec.Address == "" {
-		return ec, errors.New("missing required field \"address\"")
+		return ec, errors.New("missing required field: address")
 	} else if ec.Host == "" {
-		return ec, errors.New("missing required field host")
+		return ec, errors.New("missing required field: host")
 	} else if ec.Port == 0 {
-		return ec, errors.New("missing required field port")
+		return ec, errors.New("missing required field: port")
 	} else if ec.Login == "" {
-		return ec, errors.New("missing required field login")
+		return ec, errors.New("missing required field: login")
 	} else if ec.Password == "" {
-		return ec, errors.New("missing required field password")
+		return ec, errors.New("missing required field: password")
 	}
 
 	return ec, nil
@@ -67,7 +67,7 @@ func (ec EmailConfigs) BuildMails(configs Configs, couples []Couple) (pool []*go
 
 		m.SetBody("text/html", buffer.String())
 		embedFile(m, c.Giver.PicPath)
-		embedFile(m, "pics/_arrow.png")
+		embedFile(m, "templates/arrow.png")
 		if c.Receiver.PicPath != c.Giver.PicPath {
 			embedFile(m, c.Receiver.PicPath)
 		}

@@ -1,8 +1,5 @@
 data/*
-
-pics/*
-!pics/_arrow.png
-!pics/_missing.png
+email.json
 
 ssg
 ssg.exe

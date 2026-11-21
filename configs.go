@@ -4,12 +4,13 @@ import (
 	"encoding/json"
 	"errors"
 	"os"
+	"path/filepath"
 )
 
 const (
 	DEFAULT_SUBJECT = "SecretSantaGenerator"
 	DEFAULT_LANG    = "en"
-	DEFAULT_PICPATH = "pics/_missing.png"
+	DEFAULT_PICPATH = "templates/player.png"
 )
 
 // Configs contains the informations read from the config file
@@ -21,10 +22,10 @@ type Configs struct {
 }
 
 // LoadConfigs returns an EmailConfigs instance loaded from the given file
-func LoadConfigs(filename string) (Configs, error) {
+func LoadConfigs(datadir string, filename string) (Configs, error) {
 	var c Configs
 
-	if data, err := os.ReadFile(filename); err != nil {
+	if data, err := os.ReadFile(filepath.Join(datadir, filename)); err != nil {
 		return c, errors.New("could not open file")
 	} else if err = json.Unmarshal([]byte(data), &c); err != nil {
 		return c, errors.New("could not load file")
@@ -54,8 +55,11 @@ func LoadConfigs(filename string) (Configs, error) {
 
 		if c.Players[p].PicPath == "" {
 			c.Players[p].PicPath = DEFAULT_PICPATH
-		} else if _, err := os.Stat(c.Players[p].PicPath); err != nil {
-			return c, errors.New("pic not found")
+		} else {
+			c.Players[p].PicPath = filepath.Join(datadir, c.Players[p].PicPath)
+			if _, err := os.Stat(c.Players[p].PicPath); err != nil {
+				return c, errors.New("pic not found")
+			}
 		}
 
 		for _, i := range c.Players[p].Ideas {

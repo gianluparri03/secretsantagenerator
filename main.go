@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-//go:embed templates pics/_missing.png pics/_arrow.png
+//go:embed templates
 var assets embed.FS
 
 func main() {
@@ -30,7 +30,7 @@ func main() {
 	checkErr(err, true)
 
 	fmt.Print("Reading configs_file... ")
-	configs, err := LoadConfigs(flags.Config)
+	configs, err := LoadConfigs(flags.DataDir, flags.Config)
 	flags.Sleep(1)
 	checkErr(err, true)
 
